@@ -38,4 +38,5 @@ app.MapGet("/api/livros/{id}", async([FromServices] BibliotecaDbContext db, int 
     Results.NotFound("Livro nao encontrado");
 });
 
+
 app.Run();
