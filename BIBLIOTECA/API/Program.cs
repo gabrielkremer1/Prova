@@ -38,5 +38,32 @@ app.MapGet("/api/livros/{id}", async([FromServices] BibliotecaDbContext db, int 
     Results.NotFound("Livro nao encontrado");
 });
 
+app.MapPut("/api/livros/{id}", async ([FromServices] BibliotecaDbContext db, int id,[FromBody] Livro livroAtualizado) =>
+{
+    var livro = await db.Livros.FindAsync(id);
+
+    if (livro is null) return Results.NotFound("Livro nao encontrado");
+    if (livroAtualizado.Id !=0 && id != livroAtualizado.Id) { 
+        return Results.BadRequest("O id da URL nao correponde ao Id do Livro no corpo.");
+    }
+    if (livroAtualizado.Titulo is null || livroAtualizado.Titulo.Length < 3){ 
+        return Results.BadRequest("Erro para criar livro");
+    }
+
+    livro.Titulo = livroAtualizado.Titulo;
+    livro.Autor = livroAtualizado.Autor;
+    livro.CategoriaId = livroAtualizado.CategoriaId;
+
+    await db.SaveChangesAsync();
+    
+    return Results.Ok(livro);
+
+});
+
+app.MapDelete("/api/livros/{id}", async ([FromServices] BibliotecaDbContext db, int id) =>
+{
+    var livro
+}
+);
 
 app.Run();

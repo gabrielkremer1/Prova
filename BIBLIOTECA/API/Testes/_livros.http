@@ -14,3 +14,14 @@ Content-Type: application/json
 ### Listar livros pelo id
 GET http://localhost:5231/api/livros/3
 
+### Atualizar Livro
+PUT http://localhost:5231/api/livros/3
+Content-Type: application/json
+
+{
+ "Titulo":"Harry Potter",
+ "Autor":"J.K. Roaling",
+ "CategoriaId": 5 
+}
+
+
