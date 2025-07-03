@@ -24,4 +24,6 @@ Content-Type: application/json
  "CategoriaId": 5 
 }
 
+### Deletar livro
+DELETE http://localhost:5231/api/livros/3
 

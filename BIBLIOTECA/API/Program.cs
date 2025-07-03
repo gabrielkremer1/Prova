@@ -35,19 +35,19 @@ app.MapGet("/api/livros/{id}", async([FromServices] BibliotecaDbContext db, int 
     var livro = await db.Livros.Include( l => l.Categoria).FirstOrDefaultAsync(l => l.Id == id);
 
     return livro is not null ? Results.Ok(livro):
-    Results.NotFound("Livro nao encontrado");
+    Results.NotFound($"Livro com o id {id} nao encontrado");
 });
 
 app.MapPut("/api/livros/{id}", async ([FromServices] BibliotecaDbContext db, int id,[FromBody] Livro livroAtualizado) =>
 {
     var livro = await db.Livros.FindAsync(id);
 
-    if (livro is null) return Results.NotFound("Livro nao encontrado");
+    if (livro is null) return Results.NotFound($"Livro com o id {id} nao encontrado");
     if (livroAtualizado.Id !=0 && id != livroAtualizado.Id) { 
         return Results.BadRequest("O id da URL nao correponde ao Id do Livro no corpo.");
     }
     if (livroAtualizado.Titulo is null || livroAtualizado.Titulo.Length < 3){ 
-        return Results.BadRequest("Erro para criar livro");
+        return Results.BadRequest("Erro para atualizar livro");
     }
 
     livro.Titulo = livroAtualizado.Titulo;
@@ -62,8 +62,17 @@ app.MapPut("/api/livros/{id}", async ([FromServices] BibliotecaDbContext db, int
 
 app.MapDelete("/api/livros/{id}", async ([FromServices] BibliotecaDbContext db, int id) =>
 {
-    var livro
-}
-);
+    var livro = await db.Livros.FindAsync(id);
+
+    if (livro is null) return Results.NotFound($"Livro com o id {id} nao encontrado");
+    
+    db.Livros.Remove(livro);
+    await db.SaveChangesAsync();
+
+    var text = "Livro apagado";
+
+    return Results.Ok(text);
+
+});
 
 app.Run();
