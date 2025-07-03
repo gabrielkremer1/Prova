@@ -8,8 +8,6 @@ builder.Services.AddDbContext<BibliotecaDbContext>();
 
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
-
 app.MapPost("/api/livros", async ([FromServices] BibliotecaDbContext db, [FromBody] Livro livro) =>
 {
     if(livro.Titulo is null || livro.Titulo.Length < 3) {
@@ -24,5 +22,14 @@ app.MapPost("/api/livros", async ([FromServices] BibliotecaDbContext db, [FromBo
 
     return Results.Created($"/api/livros/{livro.Id}", livro);
 });
+
+app.MapGet("/api/livros", async ([FromServices] BibliotecaDbContext db) => 
+{
+    return await db.Livros
+    .Include( l=> l.Categoria)
+    .ToListAsync();
+
+});
+
 
 app.Run();
