@@ -28,8 +28,14 @@ app.MapGet("/api/livros", async ([FromServices] BibliotecaDbContext db) =>
     return await db.Livros
     .Include( l=> l.Categoria)
     .ToListAsync();
-
 });
 
+app.MapGet("/api/livros/{id}", async([FromServices] BibliotecaDbContext db, int id) =>
+{
+    var livro = await db.Livros.Include( l => l.Categoria).FirstOrDefaultAsync(l => l.Id == id);
+
+    return livro is not null ? Results.Ok(livro):
+    Results.NotFound("Livro nao encontrado");
+});
 
 app.Run();
